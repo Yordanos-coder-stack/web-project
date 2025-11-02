@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Feedback Dashboard</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f5f6fa;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #222;
+    }
+    #feedbackContainer {
+      max-width: 900px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    .feedback-card {
+      border-bottom: 1px solid #eee;
+      padding: 15px 10px;
+      transition: background 0.3s;
+    }
+    .feedback-card:hover {
+      background: #fafafa;
+    }
+    .feedback-header {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #2d3436;
+    }
+    .feedback-email {
+      color: #636e72;
+      font-size: 0.9rem;
+    }
+    .feedback-message {
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+    .feedback-date {
+      text-align: right;
+      font-size: 0.8rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📬 Customer Feedback Dashboard</h1>
+  <div id="feedbackContainer">
+    <p>Loading feedback messages...</p>
+  </div>
+<script>
+async function loadFeedback() {
+  const container = document.getElementById("feedbackContainer");
+  container.innerHTML = "<p>Loading feedback messages...</p>";
+
+  try {
+    const response = await fetch("http://localhost:5000/api/feedback");
+    const feedbacks = await response.json();
+
+    if (feedbacks.length === 0) {
+      container.innerHTML = "<p>No feedback messages found.</p>";
+      return;
+    }
+
+    container.innerHTML = "";
+    feedbacks.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "feedback-card";
+
+      const replyForm = `
+        <textarea id="reply-${item._id}" rows="2" placeholder="Write a reply..." style="width:100%;margin-top:8px;border-radius:5px;padding:8px;"></textarea>
+        <button onclick="sendReply('${item._id}')" style="margin-top:8px;padding:6px 10px;border:none;background:#0984e3;color:white;border-radius:5px;cursor:pointer;">Send Reply</button>
+      `;
+
+      card.innerHTML = `
+        <div class="feedback-header">${item.name}</div>
+        <div class="feedback-email">${item.email}</div>
+        <div class="feedback-message">${item.message}</div>
+        <div class="feedback-date">${new Date(item.date).toLocaleString()}</div>
+        ${item.reply ? `<p><strong>Admin reply:</strong> ${item.reply}</p>` : replyForm}
+      `;
+      container.appendChild(card);
+    });
+
+  } catch (error) {
+    container.innerHTML = "<p style='color:red;'>Error loading feedback: " + error.message + "</p>";
+  }
+}
+
+// 🟢 Send reply to backend
+async function sendReply(id) {
+  const reply = document.getElementById(`reply-${id}`).value.trim();
+  if (!reply) return alert("Please write a reply before sending.");
+
+  const res = await fetch(`http://localhost:5000/api/feedback/${id}/reply`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ reply })
+  });
+
+  const data = await res.json();
+  alert(data.message);
+  loadFeedback(); // refresh list
+}
+
+// Optional: Only admin access
+if (localStorage.getItem("currentUser") !== "admin") {
+  alert("Access denied. Admins only!");
+  window.location.href = "login.html";
+}
+
+loadFeedback();
+</script>
+
+</body>
+</html>
+

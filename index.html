@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Marketing</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h2>Our Store</h2>
+        <div class="search-container">
+            <input type="text" 
+            id="search-input"
+            placeholder="search product..."
+            >
+           <i class="fas fa-search"></i>
+
+        </div>
+        <button class="cart-btn" onclick="togglecart()">
+          cart(<span id="cart-count">0</span>)
+        </button>
+        <button onclick="logout()" style="background:none; border:none; color:white; cursor:pointer;">Logout</button>
+
+    </header>
+    <nav class="category-filter">
+        <button class="category-btn active" data-category="Home">Home</button>
+        <button class="category-btn " data-category="electronics">Electronics</button>
+        <button class="category-btn " data-category="transports">Transports</button>
+        <button class="category-btn " data-category="books">Books</button>
+        <button class="category-btn " data-category="cloths">Cloths</button>
+
+    </nav>
+    <div class="products-container" id="products-container"></div>
+    <aside id="cart-sidebar" class="cart-sidebar">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2>Your Cart</h2>
+        <button onclick="closeCart()" style="
+            background:none;
+            border:none;
+            font-size:24px;
+            cursor:pointer;
+            color:#333;
+        " title="Close Cart">&times;</button>
+    </div>
+
+    <div id="cart-items" class="cart-items"></div>
+    <p>Total: $<span id="cart-total">0.00</span></p>
+    <button class="checkout-btn" onclick="showPymentModel()">Checkout</button>
+</aside>
+
+
+    <div class="payment-model" id="payment-model">
+       <div class="payment-content">
+        <span class="close-btn" onclick="closePaymentModel()">&times;</span>
+        <h2>Payment Details</h2>
+        <div class="payment-methods">
+            <button class="payment-method active" data-method="credit-card">
+                <i class="fas fa-credit-card"></i> Credit Card
+            </button>
+            <button class="payment-method" data-method="paypal">
+                <i class="fab fa-paypal"></i> Paypal
+            </button>
+            <button class="payment-method" data-method="crypto">
+                <i class="fas fa-coins"></i> Crypto
+            </button>
+        </div>
+        <form id="payment-form" onsubmit="processPyment(event)">
+            <div class="form-group">
+            <label>Card Number</label>
+            <input 
+            type="text"
+            pattern="\d*"
+            minlength="16"
+            maxlength="16"
+            required>
+
+            </div>
+            <div class="form-row">
+            <div class="form-group">
+                <label >Expire Date</label>
+                <input type="month" required>
+            </div>
+            <div class="form-group">
+                <label>CVV</label>
+                <input type="text" pattern="\d{3}" required>
+            </div>
+            </div>
+            <div class="form-group">
+            <label>Card Holder Name</label>
+            <input type="text" required>
+            </div>
+            <button type="submit" class="pay-now-btn">
+            <i class="fas fa-lock"></i>pay $:<span id="payment-total">0</span>
+             </button>
+       </form>
+       <div class="payment-processing" id="payment-processing">
+            <div class="spinner"></div>
+            <p>Processing Payment</p>
+       </div>
+       <div class="payment-success" id="payment-success">
+        <i class="fas fa-check-circle"></i>
+        <h3>Payment Successful</h3>
+        <p>Thanks For Your Purchase</p>
+       </div>
+       </div>
+    </div>
+   
+<!-- ✅ Customer Feedback Form + Admin Reply Notification -->
+<section id="feedback-section" style="padding:2rem; background:#f9f9f9; margin-top:3rem; border-top:2px solid #eee;">
+  <h2 style="color:chocolate; text-align:center;">Send Us Your Feedback</h2>
+  <p style="text-align:center; color:#555;">We’d love to hear your thoughts!</p>
+
+  <form id="feedbackForm" style="max-width:500px; margin:2rem auto;">
+    <input type="text" id="feedback-name" placeholder="Your Name" required
+           style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;">
+    <input type="email" id="feedback-email" placeholder="Your Email" required
+           style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;">
+    <textarea id="feedback-message" placeholder="Write your feedback..." required
+           style="width:100%; padding:10px; height:120px; border:1px solid #ccc; border-radius:5px;"></textarea>
+    <button type="submit"
+           style="background:chocolate; color:white; border:none; padding:10px 15px; border-radius:5px; cursor:pointer; width:100%; font-size:16px;">
+      Submit Feedback
+    </button>
+  </form>
+
+  <!-- ✅ Success Message -->
+  <div id="feedbackSuccess" style="display:none; color:green; font-weight:bold; text-align:center; margin-top:10px;">
+    ✅ Thank you! Your feedback has been submitted successfully.
+  </div>
+
+  <!-- 💬 Admin Reply Notification -->
+  <div id="replyNotification" style="display:none; margin-top:20px; padding:10px; background:#e8f5e9; border:1px solid #4caf50; border-radius:8px; max-width:500px; margin:auto;">
+    💬 <strong>New reply from admin:</strong> <span id="replyText"></span>
+  </div>
+</section>
+
+<!-- ✅ Add your JS file -->
+<script src="script.js"></script>
+
+
